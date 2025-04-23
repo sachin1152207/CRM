@@ -1,0 +1,110 @@
+
+{% extends "base.html" %}
+{% block title %}Home - CRM081 | Chanda Records Management{% endblock %}
+{% block content %}
+
+   
+
+<!-- CRM summary -->
+ <div class="container mb-4">
+  <h2 class="text-start fw-semibold mb-4">Dasboard</h2>
+  <div class="row g-3 text-center">
+  
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Current Balance</h6>
+          <h3 class="fw-bold text-primary">रु <span id="currentBalance"></span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Total Expenses</h6>
+          <h3 class="fw-bold text-danger">रु <span id="totalExpense"></span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Total Collection</h6>
+          <h3 class="fw-bold text-success">रु <span id="totalCollection"></span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Total Records</h6>
+          <h3 class="fw-bold text-dark">{{total_records}}</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+ </div>
+
+    <!-- Recent Donated List -->
+    <div class="container">
+     <h3 class="text-start fw-semibold mb-4">Top Paid</h3>
+     
+     <div class="table-responsive">
+       <table class="table table-striped table-hover">
+         <thead class="table-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col" colspan="8">Name</th>
+          <th scope="col">Status</th>
+          <th scope="col">Amount</th>
+        </tr>
+         </thead>
+         <tbody>
+          {% for item in top_paid %}
+        <tr>
+          <th scope="row">{{loop.index}}</th>
+          <td colspan="8">{{item.name}}</td>
+          <td>{{item.status}}</td>
+          <td>{{item.amount}}</td>
+        </tr>
+             {% endfor %}
+         </tbody>
+       </table>
+     </div>
+    </div>
+
+ <!-- Recent Expense List -->
+ <div class="container mt-2">
+    <h3 class="text-start fw-semibold mb-4">Recent Expense</h3>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+       <tr>
+         <th scope="col">#</th>
+         <th scope="col" >Name</th>
+         <th scope="col">Date</th>
+         <th scope="col">Amount</th>
+       </tr>
+        </thead>
+        <tbody>
+         {% for expense in recent_expenses %}
+       <tr>
+         <th scope="row">{{loop.index}}</th>
+         <td >{{expense.spent_by}}</td>
+         <td>{{expense.bill_issued_date}}</td>
+         <td>{{expense.spent_amount}}</td>
+       </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </div>
+   </div>
+
+   <!--Todo: Create a modal that show all expense list including: Expense Via, Amout, Date, Goods etc  -->
+   
+
+{% endblock %}

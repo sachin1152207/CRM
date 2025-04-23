@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+    <title>CRM081 Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='assests/bootstrap@5.3.5/bootstrap.min.css') }}">
+    <style>
+        body {
+            background: #f0f2f5;
+        }
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+        .brand-name {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="brand-name">CRM</div>
+        {% if error %}
+        
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+       {% endif %}
+
+        <form method="post" action="/auth/login">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" autocomplete="off" class="form-control" name="username" id="username" placeholder="Enter your username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{url_for('static', filename='assests/bootstrap@5.3.5/bootstrap.min.js')}}"></script>
+</body>
+</html>

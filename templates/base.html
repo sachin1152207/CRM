@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assests/bootstrap@5.3.5/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assests/css/main-style.css') }}">
+    {% block icon %}{% endblock %}
+  </head>
+  <body>
+    
+    <!-- Navbar -->
+    <nav class="navbar bg-body-tertiary fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold fs-1" href="/">CRM</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-semibold" id="offcanvasNavbarLabel">Chanda Records Managment</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'home.index' %}active fw-semibold{% endif %}" aria-current="page" href="{{ url_for('home.index') }}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'record.index' %}active fw-semibold{% endif %}" aria-current="page" href="{{ url_for('record.index') }}">Records</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'income.index' %}active fw-semibold{% endif %}" href="{{ url_for('income.index') }}">Income</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'expense.index' %}active fw-semibold{% endif %}" href="{{ url_for('expense.index') }}">Expense</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'reports.index' %}active fw-semibold{% endif %}" href="{{ url_for('reports.index') }}">Reports</a>
+              </li>
+              
+              <li class="nav-item">
+                <a href="/auth/logout" class="btn btn-danger w-100">Logout</a>
+              </li>
+            </ul>
+            
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="mt-1 opacity-0">Sachin Shrivastav</div>
+    <div class="mt-5 opacity-0">Sachin Shrivastav</div>
+
+<!-- -Alert Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-3 shadow-lg" style="max-width:320px;margin:auto;">
+      <div class="modal-body text-center p-4">
+        <!-- Icon Slot -->
+        <div class="mb-2">
+          <span class="success-icon"></span>
+        </div>
+        <!-- Main Message -->
+        <h5 class="fw-bold mb-1" id="alertModalStatus">Success!</h5>
+        <!-- Optional Subtext -->
+        <p class="text-muted small mb-2" id="alertModalMessage">Your data has been saved successfully.</p>
+        <button type="button" class="btn btn-primary w-100 rounded-pill" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+      {% block content %}{% endblock %}
+    <!-- Footer -->
+      <footer class="text-center text-lg-start bg-light text-muted mt-4">
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+          © {{fiscal_year}} {{company_name}} | {{company_address}} | All rights reserved.
+        </div>
+      </footer>
+    
+        <!-- Bootstrap JS and dependencies -->
+        
+        <script src="{{url_for('static', filename='assests/bootstrap@5.3.5/bootstrap.min.js')}}"></script>
+        <script src="{{url_for('static', filename='assests/bootstrap@5.3.5/popper.min.js')}}"></script>
+        <script src="{{url_for('static', filename='assests/js/main-script.js')}}"></script>
+      
+
+      </body>
+    </html>

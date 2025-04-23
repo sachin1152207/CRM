@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Home - CRM081 | Chanda Records Management{% endblock %}
+{% block content %}
+
+<!-- CRM summary -->
+<div class="container mb-4">
+  <h2 class="text-start fw-semibold mb-4">Dasboard</h2>
+  <div class="row g-3 text-center">
+  
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Current Balance</h6>
+          <h3 class="fw-bold text-primary">रु <span id="currentBalance"></span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Total Expenses</h6>
+          <h3 class="fw-bold text-danger">रु <span id="totalExpense"></span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Total Collection</h6>
+          <h3 class="fw-bold text-success">रु <span id="totalCollection"></span></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="text-muted">Total Records</h6>
+          <h3 class="fw-bold text-dark">{{total_records}}</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+ </div>
+<!-- Statment -->
+<div class="container">
+   <div class="d-flex justify-content-between align-item-center mb-4">
+    <h2 class="text-start fw-semibold ">Statement</h2>
+    <a href="/reports/export" class="btn btn-primary pt-2">Download as CSV</a>
+   </div>
+   <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle text-nowrap">
+      <thead class="table-light text-center">
+        <tr>
+          <th scope="col">S.No</th>
+          <th scope="col">Description</th>
+          <th scope="col">Type</th>
+          <th scope="col">Date</th>
+          <th scope="col">Debit</th>
+          <th scope="col">Credit</th>
+          <th scope="col">Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for transaction in all_reports %}
+        <tr>
+          <th scope="row" class="text-center">{{ loop.index }}</th>
+          <td class="text-truncate" style="max-width: 120px;">{{ transaction.title }}</td>
+          <td class="text-center">{{ transaction.type }}</td>
+          <td class="text-center">{{ datetime.fromtimestamp(transaction.date).strftime('%Y-%m-%d') }}</td>
+  
+          <td class="text-end">
+            {% if transaction.type == 'Expense' %}
+              {{ transaction.amount }}
+            {% endif %}
+          </td>
+          <td class="text-end">
+            {% if transaction.type == 'Income' %}
+              {{ transaction.amount }}
+            {% endif %}
+          </td>
+          <td class="text-end fw-bold">{{ transaction.balance }}</td>
+        </tr>
+        {% endfor %}
+  
+        <tr class="table-warning text-center">
+          <td colspan="4" class="text-uppercase fw-semibold">Final Summary</td>
+          <td class="fw-semibold text-end">रु {{ final_summary.total_expense }}</td>
+          <td class="fw-semibold text-end">रु {{ final_summary.total_income }}</td>
+          <td class="fw-semibold text-end">रु {{ final_summary.balance }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+</div>
+
+
+
+{% endblock %}

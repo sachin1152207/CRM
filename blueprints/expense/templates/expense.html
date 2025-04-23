@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% block title %}Expense - CRM081 | Chanda Records Management{% endblock %}
+{% block content %}
+{% block icon %}
+<link rel="stylesheet" href="{{url_for('static', filename='/assests/icons/success-animation-icon.css')}}">
+{% endblock  %}
+
+      <!-- Current Blance & Total Expense -->
+       <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-start fw-semibold m-0">Total Expenses</h2>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBillModal">Add Bill</button>
+        </div>
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="card text-bg-primary mb-3">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <div>Current Balance</div>
+                <img onclick="refreshBalance(event)" id="currentBalanceRefreshIcon" width="20" class="img-fluid cursor-pointer me-2" src="{{url_for('static', filename='/assests/icons/refresh-icon.svg')}}" alt="">
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">रु <span id="currentBalance">{{amount_report.current_balance}}</span></h5>
+                <p class="card-text">Total balance available in the account.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card text-bg-danger mb-3">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <div>Total Expense</div>
+                <img onclick="refreshBalance(event)" id="totalExpenseRefreshIcon" width="20" class="img-fluid cursor-pointer me-2" src="{{url_for('static', filename='/assests/icons/refresh-icon.svg')}}" alt="">
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">रु <span id="totalExpese">{{amount_report.total_expense}}</span></h5>
+                <p class="card-text">Total expense recorded till now.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+       
+       </div>
+
+ <!-- Recent Expense List -->
+ <div class="container mt-2">
+    <h3 class="text-start fw-semibold mb-4">Recent Expense</h3>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+       <tr>
+         <th scope="col">#</th>
+         <th scope="col" colspan="8">Spent Via</th>
+         <th scope="col">Date</th>
+         <th scope="col">Amount</th>
+         <th scope="col">Action</th>
+       </tr>
+        </thead>
+        <tbody>
+
+          {% for item in expense_list %}
+       <tr>
+         <th scope="row">{{loop.index}}</th>
+         <td  colspan="8">{{item.spent_by}}</td>
+         <td>{{ datetime.strptime(item.bill_issued_date, "%Y-%m-%d").strftime('%d %B') }}</td>
+         <td>{{item.spent_amount}}</td>
+         <td><button class="btn btn-sm btn-outline-primary" onclick="getExpenseDetails({{item.id}})" data-bs-toggle="modal" data-bs-target="#showBillDetailsModal">Details</button></td>
+       </tr>
+       {% endfor %}
+        </tbody>
+      </table>
+    </div>
+   </div>
+
+
+
+<!-- Add bill Modal -->
+<div class="modal fade" id="addBillModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-sm rounded-4">
+      <div class="modal-header border-0 text-center d-block">
+        <h5 class="fw-bold mb-1">Add New Bill</h5>
+        <p class="text-muted small mb-0">Fill the details below carefully</p>
+      </div>
+
+      <form onsubmit="addExpenseBill(event)">
+        <div class="modal-body px-3 py-2">
+
+          <div class="mb-3">
+            <label for="billTitle" class="form-label small">Bill Purpose</label>
+            <input type="text" class="form-control" id="billTitle" name="addBillPurpose" placeholder="e.g. Stationery Purchase" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="spentbyName" class="form-label small">Spent By</label>
+            <input type="text" class="form-control" name="addBillSpentby" id="spentbyName" placeholder="Person's Name" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="billissueddate" class="form-label small">Bill Issued Date</label>
+            <input type="date" class="form-control" name="addBillIssuedDate" id="billissueddate" required>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label class="form-label small m-0">Items</label>
+              <button type="button" onclick="addBillItem(event)" class="btn btn-sm btn-outline-primary">+ Add Item</button>
+            </div>
+            <div id="itemEntryList">
+              <div class="d-flex gap-2 mb-2">
+                <input type="text" name="itemName1" class="form-control" placeholder="Item Name">
+                <input type="text" name="itemQuantity1" class="form-control" placeholder="Qty">
+                <input type="number" name="itemPrice1" class="form-control" onchange="addTotalAmount(event)" placeholder="Price रु">
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="addbillImage" class="form-label small">Bill Image <span class="text-muted">(Optional)</span></label>
+            <input class="form-control" type="file" accept="image/png, image/jpeg" name="addBillImage" id="addbillImage">
+          </div>
+
+          <div class="mb-3">
+            <label for="addBillTotalAmount" class="form-label small">Total Amount</label>
+            <input type="number" value="0" class="form-control" id="addBillTotalAmount" name="addBillTotalAmount" placeholder="रु 0" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="addBillRemark" class="form-label small">Remarks</label>
+            <textarea class="form-control" name="addBillRemark" id="addBillRemark" rows="2" placeholder="e.g. Paid via UPI on 12th April"></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer justify-content-between border-0 bg-light rounded-bottom px-3 py-2">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Bill</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+ <!--Show expense bill modal  -->
+<div class="modal fade" id="showBillDetailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4" style="max-width: 500px; margin: auto;">
+      <div class="modal-header border-0 text-center d-block pb-0">
+        <h4 class="fw-bold mb-1">Bill Details</h4>
+        <p class="text-muted small mb-0">Summary of Expense Information</p>
+      </div>
+
+      <div class="modal-body px-4 py-3">
+
+        <table class="table table-borderless mb-2">
+          <tbody>
+            <tr>
+              <td class="text-muted">Purpose</td>
+              <td class="text-end fw-semibold" id="expenseBillPurpose"></td>
+            </tr>
+            <tr>
+              <td class="text-muted">Spent By</td>
+              <td class="text-end fw-semibold" id="expenseSpentBy"></td>
+            </tr>
+            <tr>
+              <td class="text-muted">Issued Date</td>
+              <td class="text-end fw-semibold" id="expenseDate"></td>
+            </tr>
+            <tr>
+              <td class="text-muted">Entry Date</td>
+              <td class="text-end fw-semibold" id="entryDate"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="table-responsive mb-4 border rounded-3">
+          <table class="table table-sm table-striped align-middle text-center m-0">
+            <thead class="table-light">
+              <tr>
+                <th style="width:10%;">#</th>
+                <th>Item Name</th>
+                <th>Qty</th>
+                <th>Price (रु)</th>
+              </tr>
+            </thead>
+            <tbody id="expenseItemList">
+              <!-- Dynamic rows here -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mb-1" id="expenseBillImageContainer">
+          <div class="d-flex justify-content-between align-items-center">
+            <p class="text-muted small mb-0">Bill Image</p>
+            <a id="expenseBillImage" target="_blank" class="small fw-medium text-decoration-none">View / Download</a>
+          </div>
+        </div>
+
+        <div class="p-3 bg-light rounded-3 mb-3">
+          <div class="text-muted small mb-1">Remarks</div>
+          <div id="expenseRemark" class="fw-semibold text-dark"></div>
+        </div>
+
+        <div class="text-center mt-2">
+          <small class="text-muted fst-italic">This is a computer-generated bill — no signature required.</small>
+        </div>
+      </div>
+
+      <div class="modal-footer justify-content-between border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="generatePDF()">Export Bill</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// Add Item List Script Here
+let itemCount = 1;
+function addBillItem(e){
+  let itemEntryList =  document.getElementById("itemEntryList");
+  itemCount++;
+  const newItem = document.createElement('div');
+  newItem.className = 'd-flex justify-content-center mt-2';
+
+  newItem.innerHTML = `
+      <input type="text" name="itemName${itemCount}" class="form-control me-1" placeholder="Item Name ${itemCount}">
+      <input type="text" name="itemQuantity${itemCount}" class="form-control me-1" placeholder="Item Quantity ${itemCount}">
+      <input type="number" name="itemPrice${itemCount}" class="form-control"  onchange="addTotalAmount(event)" placeholder="Item Price ${itemCount}">
+      <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">−</button>`;
+
+  itemEntryList.appendChild(newItem);
+    
+
+}
+
+// get expense details with expense id
+function getExpenseDetails(expense_id){
+  let expenseBillPurpose = document.getElementById("expenseBillPurpose")
+  let expenseSpentBy = document.getElementById("expenseSpentBy")
+  let expenseDate = document.getElementById("expenseDate")
+  let entryDate = document.getElementById("entryDate")
+  let expenseItemList = document.getElementById("expenseItemList")
+  let expenseRemark = document.getElementById("expenseRemark")
+  let expenseBillImage = document.getElementById("expenseBillImage")
+  // clearing expense_item rows
+              
+  expenseItemList.innerHTML = ""
+
+  fetch('/expense/getbilldetails?expense_id=' + expense_id)
+        .then(response => response.json())
+        .then(data => {
+           if (data.status === true){
+            console.log(data)
+            // Pasring expense_details
+            expenseBillPurpose.innerText = data.expense_details.bill_purpose
+            expenseSpentBy.innerText = data.expense_details.spent_by
+            expenseDate.innerText = data.expense_details.bill_issued_date
+            entryDate.innerText = formatDate(parseInt(data.expense_details.timestamp))
+            expenseRemark.innerText = data.expense_details.remarks
+            if (data.expense_details.bill_image_filename === null){
+              expenseBillImage.href = `#`
+              expenseBillImage.classList.add("not-downloadable")
+            }
+            else{
+              expenseBillImage.href = `/expense/download_bill?filename=${data.expense_details.bill_image_filename}`
+              expenseBillImage.classList.remove("not-downloadable")
+            }
+
+            // populating expense_items
+            for (let index = 0; index < data.expense_items.length; index++) {
+              const items = data.expense_items[index];
+              let row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${index+1}</td>
+                <td>${items.itemName}</td>
+                <td>${items.itemQty}</td>
+                <td>${items.itemPrice}</td>
+              `
+              expenseItemList.appendChild(row)
+            }
+            let totalAmountRow = document.createElement("tr");
+            totalAmountRow.innerHTML = `
+            <tr>
+                  <td colspan="3" class="text-end me-2 fw-bold">Grand Total</td>
+                  <td class="">${data.expense_details.spent_amount}</td>
+                </tr>
+            `
+            expenseItemList.appendChild(totalAmountRow)
+           }
+        })
+        .catch(error => console.error('Error fetching record:', error));
+}
+// Add total amount
+function addTotalAmount(e) {
+  let currentItemPrice = parseInt(e.target.value) || 0;  // Convert to number
+  let addBillTotalAmount = document.getElementById("addBillTotalAmount");
+
+  let existingTotal = parseInt(addBillTotalAmount.value) || 0;  // Existing total
+  let newTotal = existingTotal + currentItemPrice;
+
+  addBillTotalAmount.value = newTotal;  // Format to 2 decimals
+  console.log(`Added: ${currentItemPrice}, New Total: ${newTotal}`);
+}
+
+
+// Add expense bill
+function addExpenseBill(e){
+  e.preventDefault();
+  let formData = new FormData(e.target)
+  fetch('/expense/add_bill', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        
+        if(data.status === true) {
+          e.target.reset();
+          let modal = bootstrap.Modal.getInstance(document.getElementById('addBillModal'));
+          modal.hide()
+          showAlert("Success", "Bill added sucessfully!")
+          setTimeout(() => {
+                location.reload(); // Reload the page after 3 seconds
+            }, 3000);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Something went wrong!");
+    });
+}
+
+
+// 
+
+</script>
+
+
+  {% endblock %}

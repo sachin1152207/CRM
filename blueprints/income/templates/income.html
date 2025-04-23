@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% block title %}Record - CRM081 | Chanda Records Management{% endblock %}
+{% block content %}
+
+
+
+ <!-- Current Blance & Total Blance -->
+ <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-start fw-semibold m-0">Total Collections</h2>
+        
+    </div>
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card text-bg-success mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>Total Collection</div>
+            <img onclick="refreshBalance(event)" id="currentBalanceRefreshIcon" width="20" class="img-fluid cursor-pointer me-2" src="{{url_for('static', filename='/assests/icons/refresh-icon.svg')}}" alt="">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">रु <span id="totalCollection">{{amount_report.total_collection}}</span></h5>
+            <p class="card-text">Total collected blance.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-bg-primary mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>Total Paid</div>
+            <img onclick="refreshBalance(event)" id="totalPaidRefreshIcon" width="20" class="img-fluid cursor-pointer me-2" src="{{url_for('static', filename='/assests/icons/refresh-icon.svg')}}" alt="">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">रु <span id="totalPaid">{{amount_report.total_paid}}</span></h5>
+            <p class="card-text">Total paid blance.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-bg-warning mb-3">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>Total Unpaid</div>
+            <img onclick="refreshBalance(event)" id="totalUnpaidRefreshIcon" width="20" class="img-fluid cursor-pointer me-2" src="{{url_for('static', filename='/assests/icons/refresh-icon.svg')}}" alt="">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">रु <span id="totalUnpaid">{{amount_report.total_unpaid}}</span></h5>
+            <p class="card-text">Total unpaid blance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+   
+   </div>
+
+  <!--Income reports  -->
+   <div class="container">
+    <h3 class="text-start fw-semibold m-0 mb-3">Income Reports</h3>
+    <div class="accordion accordion-flush" id="accordionExample">
+     
+       <!-- Today Paid -->
+       <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#todayPaid" aria-expanded="true" aria-controls="collapseOne">
+            <h6 class="fw-bold m-0">Today Paid</h6>
+          </button>
+        </h2>
+        <div id="todayPaid" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+              <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Payment Mode</th>
+                      <th scope="col">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in today_paid %}
+                    <tr>
+                      <th scope="row">{{loop.index}}</th>
+                      <td>{{item.name}}</td>
+                      <td>{{item.payment_mode}}</td>
+                      <td>{{item.amount}}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                      
+                    <td colspan="3" class="fw-bold text-center text-capitalize">Total</td>
+                    <td class="fw-bold">{{today_paid_amount}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+          </div>
+        </div>
+      </div>
+        <!-- Today Unpaid -->
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
+                <h6 class="fw-bold m-0">Today Unpaid</h6>
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                  <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Name</th>
+                          <th scope="col">Remarks</th>
+                          <th scope="col">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for item in today_unpaid %}
+                        <tr>
+                          <th scope="row">{{loop.index}}</th>
+                          <td>{{item.name}}</td>
+                          <td>{{item.remarks}}</td>
+                          <td>{{item.amount}}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                          
+                        <td colspan="3" class="fw-bold text-center text-capitalize">Total</td>
+                        <td class="fw-bold">{{today_unpaid_amount}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+          </div>
+          
+         <!-- Today Collection -->
+         <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              <h6 class="fw-bold m-0">Today Collections</h6>
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for item in today_collection %}
+                      <tr>
+                        <th scope="row">{{loop.index}}</th>
+                        <td>{{item.name}}</td>
+                        <td>{{item.status}}</td>
+                        <td>{{item.amount}}</td>
+                      </tr>
+                      {% endfor %}
+                      <tr>
+                          
+                        <td colspan="3" class="fw-bold text-center text-capitalize">Total</td>
+                        <td class="fw-bold">{{today_collection_amount}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+   </div>
+{% endblock %}

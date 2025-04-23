@@ -1,0 +1,10 @@
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.not-downloadable{
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
