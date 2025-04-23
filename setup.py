@@ -104,8 +104,8 @@ def setup():
         json.dump(data, json_file, indent=4)
     print("\n Configuration file 'config.json' created successfully.")
     # Creating uploads directory
-    if not os.path.exists('./static/uploads/expense_bil_image'):
-        os.makedirs('./static/uploads/expense_bil_image')
+    if not os.path.exists('./static/uploads/expense_bill_image'):
+        os.makedirs('./static/uploads/expense_bill_image')
 
     # Create the database and tables
     create_database(database_name)
